@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'WhippleHub_Android_Project_Fixed.zip'
+      - 'WhippleHub_FamilyCalendar_Update.zip'
       - '.github/workflows/build.yml'
 
 jobs:
