@@ -21,29 +21,23 @@ jobs:
           distribution: temurin
           java-version: '21'
 
+      
       - name: Prepare project
         run: |
           sudo apt-get update
           sudo apt-get install -y unzip
+          ZIP_FILE=$(find . -maxdepth 1 -type f -iname '*.zip' -print -quit)
+          if [ -z "$ZIP_FILE" ]; then
+            echo "No ZIP file found in repository root"
+            ls -la
+            exit 1
+          fi
           mkdir luna-src
-          unzip Luna_Android_Starter_Project_Phone_Build.zip -d luna-src
+          unzip "$ZIP_FILE" -d luna-src
           PROJECT_DIR=$(find luna-src -name settings.gradle.kts -printf '%h\n' | head -n 1)
           if [ -z "$PROJECT_DIR" ]; then
             echo "Could not find settings.gradle.kts in the ZIP"
+            find luna-src -maxdepth 4 -type f
             exit 1
           fi
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
-
-      - name: Build debug APK
-        run: |
-          cd "$PROJECT_DIR"
-          curl -L https://services.gradle.org/distributions/gradle-9.6.1-bin.zip -o /tmp/gradle.zip
-          unzip -q /tmp/gradle.zip -d /tmp
-          /tmp/gradle-9.6.1/bin/gradle assembleDebug --no-daemon
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Luna-Android-APK
-          path: '**/build/outputs/apk/debug/*.apk'
-          if-no-files-found: error
