@@ -1,0 +1,49 @@
+
+name: Build Luna Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Luna_Android_Starter_Project_Phone_Build.zip'
+      - '.github/workflows/build.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Prepare project
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unzip
+          mkdir luna-src
+          unzip Luna_Android_Starter_Project_Phone_Build.zip -d luna-src
+          PROJECT_DIR=$(find luna-src -name settings.gradle.kts -printf '%h\n' | head -n 1)
+          if [ -z "$PROJECT_DIR" ]; then
+            echo "Could not find settings.gradle.kts in the ZIP"
+            exit 1
+          fi
+          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+
+      - name: Build debug APK
+        run: |
+          cd "$PROJECT_DIR"
+          curl -L https://services.gradle.org/distributions/gradle-9.6.1-bin.zip -o /tmp/gradle.zip
+          unzip -q /tmp/gradle.zip -d /tmp
+          /tmp/gradle-9.6.1/bin/gradle assembleDebug --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Luna-Android-APK
+          path: '**/build/outputs/apk/debug/*.apk'
+          if-no-files-found: error
