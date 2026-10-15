@@ -43,16 +43,12 @@ jobs:
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
 
       
+      
       - name: Build debug APK
         run: |
           cd "$PROJECT_DIR"
-          if [ ! -f gradlew ]; then
-            echo "Gradle wrapper not found. Searching project..."
-            find .. -name gradlew -type f
-            exit 1
-          fi
-          chmod +x gradlew
-          ./gradlew assembleDebug
+          gradle assembleDebug
+
 
 
       - name: Upload APK
