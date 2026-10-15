@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'Luna_Android_Starter_Project_Phone_Build.zip'
+      - 'WhippleHub_Android_Project.zip'
       - '.github/workflows/build.yml'
 
 jobs:
