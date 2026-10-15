@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'WhippleHub_Android_Project.zip'
+      - 'WhippleHub_Android_Project_Fixed.zip'
       - '.github/workflows/build.yml'
 
 jobs:
